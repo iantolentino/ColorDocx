@@ -13,36 +13,50 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #121212; 
-            color: #ffffff; 
+            background: #121212;
+            color: #ffffff;
         }
         .container {
-            width: 80%;
-            max-width: 1000px; 
-            background: #333333; 
+            width: 90%; 
+            max-width: 1000px;
+            background: #333333;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.6); 
-            margin: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.6);
+            margin: 10px; 
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
         }
         input, button {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
-            background: #555; 
-            color: #fff; 
-            border: 1px solid #888; 
+            background: #555;
+            color: #fff;
+            border: 1px solid #888;
             box-sizing: border-box;
+            cursor: pointer;
         }
         #content {
+            width: 100%; 
             margin-top: 20px;
             text-align: left;
-            white-space: pre-wrap; 
+            white-space: pre-wrap;
         }
         .underline {
             text-decoration: underline;
-            text-decoration-thickness: 2px; 
-            text-decoration-color: inherit; 
+            text-decoration-thickness: 2px;
+            text-decoration-color: inherit;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 95%; 
+                padding: 15px; 
+            }
+            h1 {
+                font-size: 1.5em; 
+            }
         }
     </style>
 </head>
@@ -76,7 +90,7 @@
             const contentDiv = document.getElementById("content");
             contentDiv.innerHTML = result.value;
 
-            const underlineColors = ['green', 'brown', 'blue', 'red', 'purple']; 
+            const underlineColors = ['green', 'brown', 'blue', 'red', 'purple'];
             const paragraphs = contentDiv.querySelectorAll('p');
             paragraphs.forEach((p, index) => {
                 p.classList.add('underline');
@@ -100,7 +114,7 @@
                         .underline {
                             text-decoration: underline;
                             text-decoration-thickness: 2px;
-                            text-decoration-color: inherit; /* This ensures that the underline color follows the text color */
+                            text-decoration-color: inherit;
                         }
                     </style>
                 </head>
