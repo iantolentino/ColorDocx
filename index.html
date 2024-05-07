@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorDocx</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #121212; 
+            color: #ffffff; 
+        }
+        .container {
+            width: 80%;
+            max-width: 1000px; 
+            background: #333333; 
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.6); 
+            margin: 20px;
+            box-sizing: border-box;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #555; 
+            color: #fff; 
+            border: 1px solid #888; 
+            box-sizing: border-box;
+        }
+        #content {
+            margin-top: 20px;
+            text-align: left;
+            white-space: pre-wrap; 
+        }
+        .underline {
+            text-decoration: underline;
+            text-decoration-thickness: 2px; 
+            text-decoration-color: inherit; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ColorDocx</h1>
+        <input type="file" id="upload" accept=".docx"/>
+        <button onclick="loadDocx()">Display and Underline Text</button>
+        <button id="downloadHtml">Download as HTML</button>
+        <div id="content"></div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script>
+        function loadDocx() {
+            const input = document.getElementById("upload");
+            if (input.files.length === 0) {
+                alert("Please select a .docx file first.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                mammoth.convertToHtml({arrayBuffer: event.target.result})
+                    .then(displayResult)
+                    .catch(handleError);
+            };
+            reader.readAsArrayBuffer(input.files[0]);
+        }
+
+        function displayResult(result) {
+            const contentDiv = document.getElementById("content");
+            contentDiv.innerHTML = result.value;
+
+            const underlineColors = ['green', 'brown', 'blue', 'red', 'purple']; 
+            const paragraphs = contentDiv.querySelectorAll('p');
+            paragraphs.forEach((p, index) => {
+                p.classList.add('underline');
+                p.style.textDecorationColor = underlineColors[index % underlineColors.length];
+            });
+
+            document.getElementById('downloadHtml').onclick = function() {
+                downloadHtml(contentDiv.innerHTML, 'ColorfulUnderlined.html');
+            };
+        }
+
+        function downloadHtml(htmlContent, filename) {
+            const fullHtml = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Downloaded Content</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; background: #333; color: #fff; padding: 20px; }
+                        .underline {
+                            text-decoration: underline;
+                            text-decoration-thickness: 2px;
+                            text-decoration-color: inherit; /* This ensures that the underline color follows the text color */
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${htmlContent}
+                </body>
+                </html>
+            `;
+            
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(fullHtml));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        }
+
+        function handleError(err) {
+            console.log(err);
+        }
+    </script>
+</body>
+</html>
