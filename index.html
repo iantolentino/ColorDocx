@@ -5,101 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ColorDocx</title>
     <style>
+        :root {
+            /* Light Theme Colors */
+            --primary-light: #ffffff;
+            --secondary-light: #f3f4f6;
+            --accent-light: #4a90e2;
+            --text-light: #333;
+
+            /* Dark Theme Colors */
+            --primary-dark: #121212;
+            --secondary-dark: #333333;
+            --accent-dark: #4a90e2;
+            --text-dark: #ffffff;
+
+            /* Common Colors */
+            --primary: var(--primary-light);
+            --secondary: var(--secondary-light);
+            --accent: var(--accent-light);
+            --text-color: var(--text-light);
+            --heading-color: #FFD700;
+            --bullet-color: #32CD32;
+        }
+
+        body.dark-theme {
+            --primary: var(--primary-dark);
+            --secondary: var(--secondary-dark);
+            --accent: var(--accent-dark);
+            --text-color: var(--text-dark);
+            --heading-color: #FFA500;
+            --bullet-color: #4CAF50;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #121212;
-            color: #ffffff;
+            background: var(--primary);
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
         }
         .container {
-            width: 90%; 
-            max-width: 1000px;
-            background: #333333;
+            max-width: 1200px;
+            margin: auto;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.6);
-            margin: 10px; 
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            align-items: center; 
+            align-items: center;
         }
-        input, button {
+        h1 {
+            margin-bottom: 20px;
+        }
+        input, button, select {
             width: 100%;
             padding: 10px;
-            margin-top: 10px;
-            background: #555;
-            color: #fff;
-            border: 1px solid #888;
-            box-sizing: border-box;
+            margin: 10px 0;
+            background: var(--secondary);
+            color: var(--text-color);
+            border: 1px solid var(--accent);
             cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        button:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
         }
         #content {
-            width: 100%; 
-            margin-top: 20px;
-            text-align: left;
+            width: 100%;
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 5px;
             white-space: pre-wrap;
+            text-align: left;
+            margin-top: 20px;
         }
-        .underline {
-            text-decoration: underline;
-            text-decoration-thickness: 2px;
-            text-decoration-color: inherit;
+        h2, h3, h4 {
+            color: var(--heading-color);
         }
-        @media (max-width: 600px) {
-            .container {
-                width: 95%; 
-                padding: 15px; 
-            }
-            h1 {
-                font-size: 1.5em; 
-            }
+        ul {
+            list-style-type: disc;
+            color: var(--bullet-color);
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌗</button>
     <div class="container">
         <h1>ColorDocx</h1>
-        <input type="file" id="upload" accept=".docx"/>
-        <button onclick="loadDocx()">Display and Underline Text</button>
+        <input type="file" id="upload" accept=".docx, .pdf" />
+        <select id="textStyle">
+            <option value="underline">Underline</option>
+            <option value="highlight">Highlight</option>
+            <option value="bold">Bold</option>
+            <option value="italic">Italic</option>
+        </select>
+        <button onclick="loadFile()">Display and Style Text</button>
         <button id="downloadHtml">Download as HTML</button>
-        <div id="content"></div>
+        <div id="content">Please upload a DOCX or PDF file to display content.</div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <script>
-        function loadDocx() {
+        function toggleTheme() {
+            document.body.classList.toggle("dark-theme");
+            const theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
+            localStorage.setItem("theme", theme);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-theme");
+            }
+        });
+
+        function loadFile() {
             const input = document.getElementById("upload");
             if (input.files.length === 0) {
-                alert("Please select a .docx file first.");
+                alert("Please select a .docx or .pdf file first.");
                 return;
             }
+            
+            const file = input.files[0];
+            if (file.name.endsWith(".docx")) {
+                loadDocx(file);
+            } else if (file.name.endsWith(".pdf")) {
+                loadPdf(file);
+            } else {
+                alert("Unsupported file format. Please upload a DOCX or PDF file.");
+            }
+        }
+
+        function loadDocx(file) {
             const reader = new FileReader();
             reader.onload = function(event) {
-                mammoth.convertToHtml({arrayBuffer: event.target.result})
+                mammoth.convertToHtml({ arrayBuffer: event.target.result })
                     .then(displayResult)
                     .catch(handleError);
             };
-            reader.readAsArrayBuffer(input.files[0]);
+            reader.readAsArrayBuffer(file);
+        }
+
+        function loadPdf(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const loadingTask = pdfjsLib.getDocument({ data: event.target.result });
+                loadingTask.promise.then(pdf => {
+                    let pdfText = "";
+                    const numPages = pdf.numPages;
+                    
+                    for (let i = 1; i <= numPages; i++) {
+                        pdf.getPage(i).then(page => {
+                            page.getTextContent().then(textContent => {
+                                pdfText += textContent.items.map(item => item.str).join(" ");
+                                if (i === numPages) {
+                                    displayResult({ value: pdfText });
+                                }
+                            });
+                        });
+                    }
+                }).catch(handleError);
+            };
+            reader.readAsArrayBuffer(file);
         }
 
         function displayResult(result) {
             const contentDiv = document.getElementById("content");
             contentDiv.innerHTML = result.value;
 
-            const underlineColors = ['green', 'brown', 'blue', 'red', 'purple'];
-            const paragraphs = contentDiv.querySelectorAll('p');
-            paragraphs.forEach((p, index) => {
-                p.classList.add('underline');
-                p.style.textDecorationColor = underlineColors[index % underlineColors.length];
-            });
+            const paragraphs = contentDiv.querySelectorAll("p");
+            const styleType = document.getElementById("textStyle").value;
+            applyPaletteStyles(paragraphs, styleType);
 
-            document.getElementById('downloadHtml').onclick = function() {
-                downloadHtml(contentDiv.innerHTML, 'ColorfulUnderlined.html');
+            applyHeadingStyles(contentDiv);
+            applyBulletStyles(contentDiv);
+
+            document.getElementById("downloadHtml").onclick = function() {
+                downloadHtml(contentDiv.innerHTML, "StyledContent.html");
             };
+        }
+
+        function applyPaletteStyles(paragraphs, styleType) {
+            const palette = ["#FF6347", "#4682B4", "#32CD32", "#FFD700", "#DA70D6"];
+            paragraphs.forEach((p) => {
+                const color = palette[Math.floor(Math.random() * palette.length)];
+                if (styleType === "underline") {
+                    p.style.textDecoration = "underline";
+                    p.style.textDecorationColor = color;
+                } else if (styleType === "highlight") {
+                    p.style.backgroundColor = color;
+                } else if (styleType === "bold") {
+                    p.style.fontWeight = "bold";
+                    p.style.color = color;
+                } else if (styleType === "italic") {
+                    p.style.fontStyle = "italic";
+                    p.style.color = color;
+                }
+            });
+        }
+
+        function applyHeadingStyles(contentDiv) {
+            const headings = contentDiv.querySelectorAll("h1, h2, h3, h4");
+            headings.forEach(heading => {
+                heading.style.color = "var(--heading-color)";
+                heading.style.fontWeight = "bold";
+            });
+        }
+
+        function applyBulletStyles(contentDiv) {
+            const bulletLists = contentDiv.querySelectorAll("ul");
+            bulletLists.forEach(list => {
+                list.style.color = "var(--bullet-color)";
+            });
         }
 
         function downloadHtml(htmlContent, filename) {
@@ -110,12 +234,10 @@
                     <meta charset="UTF-8">
                     <title>Downloaded Content</title>
                     <style>
-                        body { font-family: Arial, sans-serif; background: #333; color: #fff; padding: 20px; }
-                        .underline {
-                            text-decoration: underline;
-                            text-decoration-thickness: 2px;
-                            text-decoration-color: inherit;
-                        }
+                        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f3f4f6; color: #333; }
+                        h2, h3, h4 { color: var(--heading-color); }
+                        ul { color: var(--bullet-color); }
+                        p { margin: 0.5em 0; }
                     </style>
                 </head>
                 <body>
@@ -124,20 +246,17 @@
                 </html>
             `;
             
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(fullHtml));
-            element.setAttribute('download', filename);
-
-            element.style.display = 'none';
+            const element = document.createElement("a");
+            element.setAttribute("href", "data:text/html;charset=utf-8," + encodeURIComponent(fullHtml));
+            element.setAttribute("download", filename);
             document.body.appendChild(element);
-
             element.click();
-
             document.body.removeChild(element);
         }
 
-        function handleError(err) {
-            console.log(err);
+        function handleError(error) {
+            console.error(error);
+            alert("An error occurred while processing the file.");
         }
     </script>
 </body>
