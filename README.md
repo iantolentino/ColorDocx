@@ -1,33 +1,68 @@
 # ColorDocx
 
-ColorDocx is a simple web application designed to display and underline text from DOCX documents and allow users to download the styled content as HTML. This tool is particularly useful for users who need to quickly highlight sections of a DOCX file and retain those highlights in a simple HTML format for sharing or viewing.
+ColorDocx is a web-based application designed to style and display text from DOCX and PDF documents with customizable color themes and formatting options. The application allows users to underline, highlight, bold, or italicize text and download the formatted content as HTML for later use.
 
 ## Features
 
-- **Load DOCX Files**: Users can upload DOCX files from their device.
-- **Display and Underline**: Automatically converts the DOCX content to HTML, applying underlines with configurable colors.
-- **Download as HTML**: Enables users to download the displayed and styled content as an HTML file, preserving the visual modifications.
+1. **File Upload**: Upload DOCX or PDF files to display and style their content.
+2. **Text Styling**: Choose from different styling options including underline, highlight, bold, and italic.
+3. **Random Color Palette**: Each styling type is applied with a random color from a preset palette for visual variety.
+4. **Dark/Light Theme Toggle**: Switch between light and dark modes with smooth color transitions.
+5. **Download Styled Content**: Export the styled content as an HTML file, preserving colors and styling.
 
-## How to Use
+## Installation and Setup
 
-1. **Open the Application**: Launch the provided HTML file in any modern web browser.
-2. **Upload a DOCX File**: Click the 'Upload' button and select a DOCX file from your device.
-3. **View and Underline**: Click the 'Display and Underline Text' button to see the text content displayed with colorful underlines.
-4. **Download HTML**: Click the 'Download as HTML' button to save the displayed content as an HTML file.
+This project requires no additional installation as it is a standalone HTML file that can run in any modern browser. 
 
-## Technologies
+1. Download the `index.html` file.
+2. Open it in a browser to begin using the application.
 
-- HTML/CSS for layout and styling.
-- JavaScript for processing and DOM manipulation.
-- Mammoth.js for converting DOCX files to HTML.
+## Usage
 
-## System Requirements
+1. **Upload a File**:
+   - Click on the "Upload" button and select a `.docx` or `.pdf` file.
 
-- A modern web browser such as Google Chrome, Firefox, Safari, or Edge.
-- Internet access to load the necessary JavaScript libraries from CDN.
+2. **Select a Style**:
+   - Choose the desired text style from the dropdown list (underline, highlight, bold, italic).
 
-## Author
-Tolentino, Ian
+3. **Display and Style**:
+   - Click "Display and Style Text" to apply the selected styling to the text.
+   - The styled text will appear in the main content area.
 
-Feel free to modify, distribute, and use the application for personal or commercial purposes.
+4. **Download as HTML**:
+   - Once you are satisfied with the styling, click "Download as HTML" to save the formatted content.
 
+5. **Theme Toggle**:
+   - Use the toggle button in the top-right corner to switch between light and dark themes.
+
+## Code Overview
+
+### Key Components
+
+- **CSS Variables**: For dynamic theme handling, CSS variables are used to define primary, secondary, accent, and text colors for light and dark themes.
+- **JavaScript Functions**:
+  - `toggleTheme()`: Toggles between light and dark themes and saves the preference in `localStorage`.
+  - `loadFile()`, `loadDocx()`, `loadPdf()`: Handle file uploads and extract content from DOCX and PDF files.
+  - `applyPaletteStyles()`: Applies random colors to selected text styles.
+  - `applyHeadingStyles()`, `applyBulletStyles()`: Customize heading and bullet colors for a consistent look.
+  - `downloadHtml()`: Converts displayed content into an HTML file for download.
+
+### Dependencies
+
+This project uses:
+- [Mammoth.js](https://cdnjs.com/libraries/mammoth) for DOCX-to-HTML conversion.
+- [PDF.js](https://cdnjs.com/libraries/pdf.js) for PDF-to-text extraction.
+
+### Error Handling
+
+Alerts notify users if an error occurs during file loading or content processing.
+
+## Future Enhancements
+
+1. **Enhanced Text Parsing**: Improve text extraction for more accurate formatting across different document structures.
+2. **Additional Styling Options**: Allow users to customize font sizes, colors, and line spacing.
+3. **Advanced File Export Options**: Include additional file formats for download, such as DOCX or PDF.
+
+## License
+
+This project is licensed under the MIT License.
