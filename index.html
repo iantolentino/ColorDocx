@@ -84,6 +84,8 @@
             white-space: pre-wrap;
             text-align: left;
             margin-top: 20px;
+            overflow-y: auto; /* Added for scrolling */
+            max-height: 500px; /* Set a max height for better usability */
         }
         h2, h3, h4 {
             color: var(--heading-color);
@@ -92,13 +94,25 @@
             list-style-type: disc;
             color: var(--bullet-color);
         }
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: var(--accent);
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
 </head>
 <body>
     <button class="theme-toggle" onclick="toggleTheme()">🌗</button>
     <div class="container">
         <h1>ColorDocx</h1>
-        <input type="file" id="upload" accept=".docx, .pdf" />
+        <input type="file" id="upload" accept=".docx, .pdf, .epub" />
         <select id="textStyle">
             <option value="underline">Underline</option>
             <option value="highlight">Highlight</option>
@@ -107,11 +121,10 @@
         </select>
         <button onclick="loadFile()">Display and Style Text</button>
         <button id="downloadHtml">Download as HTML</button>
-        <div id="content">Please upload a DOCX or PDF file to display content.</div>
+        <div id="content">Please upload a DOCX, PDF, or EPUB file to display content.</div>
+        <div id="loading">Loading...</div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <script>
         function toggleTheme() {
             document.body.classList.toggle("dark-theme");
@@ -129,17 +142,20 @@
         function loadFile() {
             const input = document.getElementById("upload");
             if (input.files.length === 0) {
-                alert("Please select a .docx or .pdf file first.");
+                alert("Please select a .docx, .pdf, or .epub file first.");
                 return;
             }
+            document.getElementById("loading").style.display = "block";
             
             const file = input.files[0];
             if (file.name.endsWith(".docx")) {
                 loadDocx(file);
             } else if (file.name.endsWith(".pdf")) {
                 loadPdf(file);
+            } else if (file.name.endsWith(".epub")) {
+                loadEpub(file);
             } else {
-                alert("Unsupported file format. Please upload a DOCX or PDF file.");
+                alert("Unsupported file format. Please upload a DOCX, PDF, or EPUB file.");
             }
         }
 
@@ -176,6 +192,47 @@
             reader.readAsArrayBuffer(file);
         }
 
+        function loadEpub(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const book = ePub(event.target.result);
+                const contentDiv = document.getElementById("content");
+                let epubText = "";
+        
+                book.ready.then(() => {
+                    return book.loaded.spine.then(spine => {
+                        const chapterPromises = spine.items.map(chapter => {
+                            return chapter.load(book.resources)
+                                .then(content => {
+                                    epubText += content.document.body.innerText + "\n\n";
+                                    chapter.unload(); // Unload chapter to free memory
+                                })
+                                .catch(err => {
+                                    console.error("Error loading chapter:", err);
+                                });
+                        });
+        
+                        // Wait for all chapter promises to resolve
+                        return Promise.all(chapterPromises);
+                    }).then(() => {
+                        // Once all chapters are loaded, display the result
+                        displayResult({ value: epubText });
+                    }).catch(err => {
+                        console.error("Error loading EPUB spine:", err);
+                        alert("An error occurred while loading the EPUB content.");
+                    }).finally(() => {
+                        // Hide loading icon once loading is complete
+                        document.getElementById("loading").style.display = "none";
+                    });
+                }).catch(err => {
+                    console.error("Error initializing EPUB book:", err);
+                    alert("An error occurred while processing the EPUB file.");
+                    document.getElementById("loading").style.display = "none"; // Hide loading icon in case of error
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         function displayResult(result) {
             const contentDiv = document.getElementById("content");
             contentDiv.innerHTML = result.value;
@@ -186,7 +243,7 @@
 
             applyHeadingStyles(contentDiv);
             applyBulletStyles(contentDiv);
-
+            document.getElementById("loading").style.display = "none"; 
             document.getElementById("downloadHtml").onclick = function() {
                 downloadHtml(contentDiv.innerHTML, "StyledContent.html");
             };
@@ -257,6 +314,7 @@
         function handleError(error) {
             console.error(error);
             alert("An error occurred while processing the file.");
+            document.getElementById("loading").style.display = "none"; // Hide loading icon in case of error
         }
     </script>
 </body>
