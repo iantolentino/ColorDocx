@@ -66,3 +66,4 @@ Alerts notify users if an error occurs during file loading or content processing
 ## License
 
 This project is licensed under the MIT License.
+https://inexxuss.github.io/ColorDocx/
