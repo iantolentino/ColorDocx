@@ -1,67 +1,76 @@
 # ColorDocx
 
-ColorDocx is a web-based application designed to style and display text from DOCX and PDF documents with customizable color themes and formatting options. The application allows users to underline, highlight, bold, or italicize text and download the formatted content as HTML for later use.
+ColorDocx is a web application that lets you upload DOCX, PDF, or EPUB files and display their content with customizable text styling. You can apply different styles to the text, switch between dark and light themes, download the styled content as HTML or PDF, and even read the content in full-screen mode for a distraction-free experience.
 
 ## Features
 
-1. **File Upload**: Upload DOCX or PDF files to display and style their content.
-2. **Text Styling**: Choose from different styling options including underline, highlight, bold, and italic.
-3. **Random Color Palette**: Each styling type is applied with a random color from a preset palette for visual variety.
-4. **Dark/Light Theme Toggle**: Switch between light and dark modes with smooth color transitions.
-5. **Download Styled Content**: Export the styled content as an HTML file, preserving colors and styling.
+- **File Upload:**  
+  Supports DOCX, PDF, and EPUB files.
 
-## Installation and Setup
+- **Text Styling:**  
+  Choose from various styling options (underline, highlight, bold, italic) which are applied using a random color palette.
 
-This project requires no additional installation as it is a standalone HTML file that can run in any modern browser. 
+- **Theme Toggle:**  
+  Switch easily between dark and light themes.
 
-1. Download the `index.html` file.
-2. Open it in a browser to begin using the application.
+- **Download Options:**  
+  - **Download HTML:** Saves the displayed content as an HTML file with embedded styles.  
+  - **Download PDF:** Uses html2canvas and jsPDF to capture the full content and generate a PDF.
 
-## Usage
+- **Full Screen Mode:**  
+  Toggle full-screen view of the content for enhanced reading.
 
-1. **Upload a File**:
-   - Click on the "Upload" button and select a `.docx` or `.pdf` file.
+- **Responsive Design:**  
+  Built with Bootstrap for a mobile-friendly, responsive layout.
 
-2. **Select a Style**:
-   - Choose the desired text style from the dropdown list (underline, highlight, bold, italic).
+## How It Works
 
-3. **Display and Style**:
-   - Click "Display and Style Text" to apply the selected styling to the text.
-   - The styled text will appear in the main content area.
+1. **File Processing:**  
+   - The application reads files using the FileReader API.
+   - **DOCX files:** Converted to HTML using [Mammoth.js](https://github.com/mwilliamson/mammoth.js).
+   - **PDF files:** Text is extracted using [PDF.js](https://mozilla.github.io/pdf.js/).
+   - **EPUB files:** Processed using [epub.js](https://github.com/futurepress/epub.js).
 
-4. **Download as HTML**:
-   - Once you are satisfied with the styling, click "Download as HTML" to save the formatted content.
+2. **Styling:**  
+   The extracted text is displayed in a content area where styling is applied based on user selection.
 
-5. **Theme Toggle**:
-   - Use the toggle button in the top-right corner to switch between light and dark themes.
+3. **Downloads:**  
+   - **HTML Download:** The app embeds the current CSS styles into the HTML so that the look is preserved.
+   - **PDF Download:** A clone of the full content is captured (removing scroll restrictions) and rendered into a PDF.
 
-## Code Overview
+4. **Full Screen Mode:**  
+   The application uses the Fullscreen API to toggle full-screen reading for the content area.
 
-### Key Components
+## Installation and Usage
 
-- **CSS Variables**: For dynamic theme handling, CSS variables are used to define primary, secondary, accent, and text colors for light and dark themes.
-- **JavaScript Functions**:
-  - `toggleTheme()`: Toggles between light and dark themes and saves the preference in `localStorage`.
-  - `loadFile()`, `loadDocx()`, `loadPdf()`: Handle file uploads and extract content from DOCX and PDF files.
-  - `applyPaletteStyles()`: Applies random colors to selected text styles.
-  - `applyHeadingStyles()`, `applyBulletStyles()`: Customize heading and bullet colors for a consistent look.
-  - `downloadHtml()`: Converts displayed content into an HTML file for download.
+1. **Clone or Download** the repository.
 
-### Dependencies
+2. **Run on a Local Server:**  
+   For full functionality (especially file reading and PDF generation), run the app via a local server. For example, you can use:
 
-This project uses:
-- [Mammoth.js](https://cdnjs.com/libraries/mammoth) for DOCX-to-HTML conversion.
-- [PDF.js](https://cdnjs.com/libraries/pdf.js) for PDF-to-text extraction.
+   - **VS Code Live Server Extension**
+   - **Python HTTP Server:**
+     ```bash
+     python -m http.server 8000
+     ```
+   Then, open [http://localhost:8000](http://localhost:8000) in your browser.
 
-### Error Handling
+3. **Using the App:**
+   - **Upload a File:** Click the file input and select a DOCX, PDF, or EPUB file.
+   - **Select a Style:** Choose a styling option (underline, highlight, bold, italic) from the dropdown.
+   - **Display and Style:** Click the "Display and Style Text" button to process the file.
+   - **Download:** Use the "Download HTML" or "Download PDF" buttons in the navbar to save your styled content.
+   - **Full Screen:** Click the "Full Screen" button in the navbar to toggle a full-screen view of the content.
+   - **Theme Toggle:** Switch between dark and light modes using the theme toggle button (🌗).
 
-Alerts notify users if an error occurs during file loading or content processing.
+## Dependencies
 
-## Future Enhancements
-
-1. **Enhanced Text Parsing**: Improve text extraction for more accurate formatting across different document structures.
-2. **Additional Styling Options**: Allow users to customize font sizes, colors, and line spacing.
-3. **Advanced File Export Options**: Include additional file formats for download, such as DOCX or PDF.
+- [Bootstrap 5](https://getbootstrap.com/)
+- [html2canvas](https://html2canvas.hertzen.com/)
+- [jsPDF](https://github.com/parallax/jsPDF)
+- [Mammoth.js](https://github.com/mwilliamson/mammoth.js)
+- [PDF.js](https://mozilla.github.io/pdf.js/)
+- [epub.js](https://github.com/futurepress/epub.js)
 
 ## License
 
