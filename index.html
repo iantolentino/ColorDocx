@@ -1,321 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColorDocx</title>
-    <style>
-        :root {
-            /* Light Theme Colors */
-            --primary-light: #ffffff;
-            --secondary-light: #f3f4f6;
-            --accent-light: #4a90e2;
-            --text-light: #333;
-
-            /* Dark Theme Colors */
-            --primary-dark: #121212;
-            --secondary-dark: #333333;
-            --accent-dark: #4a90e2;
-            --text-dark: #ffffff;
-
-            /* Common Colors */
-            --primary: var(--primary-light);
-            --secondary: var(--secondary-light);
-            --accent: var(--accent-light);
-            --text-color: var(--text-light);
-            --heading-color: #FFD700;
-            --bullet-color: #32CD32;
-        }
-
-        body.dark-theme {
-            --primary: var(--primary-dark);
-            --secondary: var(--secondary-dark);
-            --accent: var(--accent-dark);
-            --text-color: var(--text-dark);
-            --heading-color: #FFA500;
-            --bullet-color: #4CAF50;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: var(--primary);
-            color: var(--text-color);
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        input, button, select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: var(--secondary);
-            color: var(--text-color);
-            border: 1px solid var(--accent);
-            cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        button:hover {
-            background: var(--accent);
-            color: var(--primary);
-        }
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-        #content {
-            width: 100%;
-            background: var(--secondary);
-            padding: 15px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            text-align: left;
-            margin-top: 20px;
-            overflow-y: auto; /* Added for scrolling */
-            max-height: 500px; /* Set a max height for better usability */
-        }
-        h2, h3, h4 {
-            color: var(--heading-color);
-        }
-        ul {
-            list-style-type: disc;
-            color: var(--bullet-color);
-        }
-        #loading {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: var(--accent);
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ColorDocx</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      /* Light Theme Colors */
+      --primary-light: #ffffff;
+      --secondary-light: #f3f4f6;
+      --accent-light: #4a90e2;
+      --text-light: #333;
+      /* Dark Theme Colors */
+      --primary-dark: #121212;
+      --secondary-dark: #333333;
+      --accent-dark: #4a90e2;
+      --text-dark: #ffffff;
+      /* Common Colors */
+      --primary: var(--primary-light);
+      --secondary: var(--secondary-light);
+      --accent: var(--accent-light);
+      --text-color: var(--text-light);
+      --heading-color: #FFD700;
+      --bullet-color: #32CD32;
+    }
+    body.dark-theme {
+      --primary: var(--primary-dark);
+      --secondary: var(--secondary-dark);
+      --accent: var(--accent-dark);
+      --text-color: var(--text-dark);
+      --heading-color: #FFA500;
+      --bullet-color: #4CAF50;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--primary);
+      color: var(--text-color);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    #content {
+      background: var(--secondary);
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      text-align: left;
+      margin-top: 20px;
+      overflow-y: auto;
+      max-height: 500px;
+    }
+    h1, h2, h3, h4 {
+      color: var(--heading-color);
+      font-weight: bold;
+    }
+    ul {
+      list-style-type: disc;
+      color: var(--bullet-color);
+    }
+    #loading {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: var(--accent);
+    }
+  </style>
+  <!-- External libraries -->
+  <!-- html2canvas (for PDF conversion) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- For reading files -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌗</button>
-    <div class="container">
-        <h1>ColorDocx</h1>
-        <input type="file" id="upload" accept=".docx, .pdf, .epub" />
-        <select id="textStyle">
-            <option value="underline">Underline</option>
-            <option value="highlight">Highlight</option>
-            <option value="bold">Bold</option>
-            <option value="italic">Italic</option>
-        </select>
-        <button onclick="loadFile()">Display and Style Text</button>
-        <button id="downloadHtml">Download as HTML</button>
-        <div id="content">Please upload a DOCX, PDF, or EPUB file to display content.</div>
-        <div id="loading">Loading...</div>
+  <!-- Responsive Navbar using Bootstrap -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">ColorDocx</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item me-2">
+            <button class="btn btn-outline-primary" onclick="downloadHtmlContent()">Download HTML</button>
+          </li>
+          <li class="nav-item me-2">
+            <button class="btn btn-outline-primary" onclick="downloadPdfContent()">Download PDF</button>
+          </li>
+          <li class="nav-item me-2">
+            <button class="btn btn-outline-primary" onclick="toggleFullScreen()">Full Screen</button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-secondary" onclick="toggleTheme()">🌗</button>
+          </li>
+        </ul>
+      </div>
     </div>
+  </nav>
+  
+  <div class="container my-4">
+    <div class="mb-3">
+      <!-- Accepts DOCX, PDF, and EPUB files -->
+      <input type="file" id="upload" class="form-control" accept=".docx, .pdf, .epub" />
+    </div>
+    <div class="mb-3">
+      <select id="textStyle" class="form-select">
+        <option value="underline">Underline</option>
+        <option value="highlight">Highlight</option>
+        <option value="bold">Bold</option>
+        <option value="italic">Italic</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <button class="btn btn-primary w-100" onclick="loadFile()">Display and Style Text</button>
+    </div>
+    <div id="content" class="p-3">
+      Please upload a DOCX, PDF, or EPUB file to display content.
+    </div>
+    <div id="loading">Loading...</div>
+  </div>
 
-    <script>
-        function toggleTheme() {
-            document.body.classList.toggle("dark-theme");
-            const theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
-            localStorage.setItem("theme", theme);
+  <script>
+    let styledContent = "";
+
+    // Toggle dark/light theme
+    function toggleTheme() {
+      document.body.classList.toggle("dark-theme");
+      localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-theme");
+      }
+    });
+
+    function setLoading(show) {
+      document.getElementById("loading").style.display = show ? "block" : "none";
+    }
+
+    // Main file loader (supports DOCX, PDF, and EPUB)
+    function loadFile() {
+      const input = document.getElementById("upload");
+      if (!input.files.length) {
+        alert("Please select a DOCX, PDF, or EPUB file first.");
+        return;
+      }
+      setLoading(true);
+      const file = input.files[0];
+      const fileName = file.name.toLowerCase();
+      if (fileName.endsWith(".docx")) {
+        loadDocx(file);
+      } else if (fileName.endsWith(".pdf")) {
+        loadPdf(file);
+      } else if (fileName.endsWith(".epub")) {
+        loadEpub(file);
+      } else {
+        alert("Unsupported file format.");
+        setLoading(false);
+      }
+    }
+
+    // Load DOCX using Mammoth
+    function loadDocx(file) {
+      const reader = new FileReader();
+      reader.onload = event => {
+        mammoth.convertToHtml({ arrayBuffer: event.target.result })
+          .then(displayResult)
+          .catch(handleError);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Load PDF using PDF.js
+    async function loadPdf(file) {
+      const reader = new FileReader();
+      reader.onload = async event => {
+        try {
+          const pdf = await pdfjsLib.getDocument({ data: event.target.result }).promise;
+          let pdfText = "";
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            pdfText += textContent.items.map(item => item.str).join(" ") + "\n";
+          }
+          displayResult({ value: pdfText });
+        } catch (error) {
+          handleError(error);
         }
+      };
+      reader.readAsArrayBuffer(file);
+    }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const savedTheme = localStorage.getItem("theme");
-            if (savedTheme === "dark") {
-                document.body.classList.add("dark-theme");
+    // Load EPUB using epub.js
+    async function loadEpub(file) {
+      const reader = new FileReader();
+      reader.onload = async event => {
+        try {
+          const book = ePub(event.target.result);
+          await book.ready;
+          const spine = await book.loaded.spine;
+          let epubText = "";
+          for (const chapter of spine.items) {
+            try {
+              const content = await chapter.load(book.resources);
+              epubText += content.document.body.innerText + "\n\n";
+              chapter.unload();
+            } catch (err) {
+              console.error("Chapter error:", err);
             }
+          }
+          displayResult({ value: epubText });
+        } catch (err) {
+          console.error("EPUB error:", err);
+          alert("An error occurred while processing the EPUB file.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Apply styling and display content
+    function displayResult(result) {
+      const contentDiv = document.getElementById("content");
+      contentDiv.innerHTML = result.value;
+      styledContent = contentDiv.innerHTML;
+      const paragraphs = contentDiv.querySelectorAll("p");
+      applyPaletteStyles(paragraphs, document.getElementById("textStyle").value);
+      applyCommonStyles(contentDiv);
+      setLoading(false);
+    }
+
+    function applyPaletteStyles(paragraphs, styleType) {
+      const palette = ["#FF6347", "#4682B4", "#32CD32", "#FFD700", "#DA70D6"];
+      paragraphs.forEach(p => {
+        const color = palette[Math.floor(Math.random() * palette.length)];
+        if (styleType === "underline") {
+          p.style.textDecoration = "underline";
+          p.style.textDecorationColor = color;
+        } else if (styleType === "highlight") {
+          p.style.backgroundColor = color;
+        } else if (styleType === "bold") {
+          p.style.fontWeight = "bold";
+          p.style.color = color;
+        } else if (styleType === "italic") {
+          p.style.fontStyle = "italic";
+          p.style.color = color;
+        }
+      });
+    }
+
+    function applyCommonStyles(div) {
+      div.querySelectorAll("h1, h2, h3, h4").forEach(el => {
+        el.style.color = "var(--heading-color)";
+        el.style.fontWeight = "bold";
+      });
+      div.querySelectorAll("ul").forEach(el => el.style.color = "var(--bullet-color)");
+    }
+
+    // Download as HTML with embedded styles by cloning the <style> block
+    function downloadHtmlContent() {
+      if (!styledContent) {
+        alert("No content to download.");
+        return;
+      }
+      const styleTag = document.querySelector("head style") ? document.querySelector("head style").outerHTML : "";
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>Downloaded Content</title>
+          ${styleTag}
+        </head>
+        <body>
+          ${styledContent}
+        </body>
+        </html>
+      `;
+      const blob = new Blob([fullHtml], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "StyledContent.html";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Download as PDF by cloning content, removing scroll restrictions, and capturing full content
+    function downloadPdfContent() {
+      if (!styledContent) {
+        alert("No content to download.");
+        return;
+      }
+      const originalContent = document.getElementById("content");
+      const contentClone = originalContent.cloneNode(true);
+      // Remove height and overflow restrictions to capture full content
+      contentClone.style.maxHeight = "none";
+      contentClone.style.overflowY = "visible";
+      // Position the clone off-screen
+      contentClone.style.position = "absolute";
+      contentClone.style.top = "-10000px";
+      document.body.appendChild(contentClone);
+      
+      html2canvas(contentClone).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("StyledContent.pdf");
+        document.body.removeChild(contentClone);
+      });
+    }
+
+    // New: Toggle full-screen mode for reading content
+    function toggleFullScreen() {
+      const content = document.getElementById("content");
+      if (!document.fullscreenElement) {
+        content.requestFullscreen().catch(err => {
+          alert(`Error enabling full-screen mode: ${err.message} (${err.name})`);
         });
+      } else {
+        document.exitFullscreen();
+      }
+    }
 
-        function loadFile() {
-            const input = document.getElementById("upload");
-            if (input.files.length === 0) {
-                alert("Please select a .docx, .pdf, or .epub file first.");
-                return;
-            }
-            document.getElementById("loading").style.display = "block";
-            
-            const file = input.files[0];
-            if (file.name.endsWith(".docx")) {
-                loadDocx(file);
-            } else if (file.name.endsWith(".pdf")) {
-                loadPdf(file);
-            } else if (file.name.endsWith(".epub")) {
-                loadEpub(file);
-            } else {
-                alert("Unsupported file format. Please upload a DOCX, PDF, or EPUB file.");
-            }
-        }
-
-        function loadDocx(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                mammoth.convertToHtml({ arrayBuffer: event.target.result })
-                    .then(displayResult)
-                    .catch(handleError);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function loadPdf(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const loadingTask = pdfjsLib.getDocument({ data: event.target.result });
-                loadingTask.promise.then(pdf => {
-                    let pdfText = "";
-                    const numPages = pdf.numPages;
-                    
-                    for (let i = 1; i <= numPages; i++) {
-                        pdf.getPage(i).then(page => {
-                            page.getTextContent().then(textContent => {
-                                pdfText += textContent.items.map(item => item.str).join(" ");
-                                if (i === numPages) {
-                                    displayResult({ value: pdfText });
-                                }
-                            });
-                        });
-                    }
-                }).catch(handleError);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function loadEpub(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const book = ePub(event.target.result);
-                const contentDiv = document.getElementById("content");
-                let epubText = "";
-        
-                book.ready.then(() => {
-                    return book.loaded.spine.then(spine => {
-                        const chapterPromises = spine.items.map(chapter => {
-                            return chapter.load(book.resources)
-                                .then(content => {
-                                    epubText += content.document.body.innerText + "\n\n";
-                                    chapter.unload(); // Unload chapter to free memory
-                                })
-                                .catch(err => {
-                                    console.error("Error loading chapter:", err);
-                                });
-                        });
-        
-                        // Wait for all chapter promises to resolve
-                        return Promise.all(chapterPromises);
-                    }).then(() => {
-                        // Once all chapters are loaded, display the result
-                        displayResult({ value: epubText });
-                    }).catch(err => {
-                        console.error("Error loading EPUB spine:", err);
-                        alert("An error occurred while loading the EPUB content.");
-                    }).finally(() => {
-                        // Hide loading icon once loading is complete
-                        document.getElementById("loading").style.display = "none";
-                    });
-                }).catch(err => {
-                    console.error("Error initializing EPUB book:", err);
-                    alert("An error occurred while processing the EPUB file.");
-                    document.getElementById("loading").style.display = "none"; // Hide loading icon in case of error
-                });
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function displayResult(result) {
-            const contentDiv = document.getElementById("content");
-            contentDiv.innerHTML = result.value;
-
-            const paragraphs = contentDiv.querySelectorAll("p");
-            const styleType = document.getElementById("textStyle").value;
-            applyPaletteStyles(paragraphs, styleType);
-
-            applyHeadingStyles(contentDiv);
-            applyBulletStyles(contentDiv);
-            document.getElementById("loading").style.display = "none"; 
-            document.getElementById("downloadHtml").onclick = function() {
-                downloadHtml(contentDiv.innerHTML, "StyledContent.html");
-            };
-        }
-
-        function applyPaletteStyles(paragraphs, styleType) {
-            const palette = ["#FF6347", "#4682B4", "#32CD32", "#FFD700", "#DA70D6"];
-            paragraphs.forEach((p) => {
-                const color = palette[Math.floor(Math.random() * palette.length)];
-                if (styleType === "underline") {
-                    p.style.textDecoration = "underline";
-                    p.style.textDecorationColor = color;
-                } else if (styleType === "highlight") {
-                    p.style.backgroundColor = color;
-                } else if (styleType === "bold") {
-                    p.style.fontWeight = "bold";
-                    p.style.color = color;
-                } else if (styleType === "italic") {
-                    p.style.fontStyle = "italic";
-                    p.style.color = color;
-                }
-            });
-        }
-
-        function applyHeadingStyles(contentDiv) {
-            const headings = contentDiv.querySelectorAll("h1, h2, h3, h4");
-            headings.forEach(heading => {
-                heading.style.color = "var(--heading-color)";
-                heading.style.fontWeight = "bold";
-            });
-        }
-
-        function applyBulletStyles(contentDiv) {
-            const bulletLists = contentDiv.querySelectorAll("ul");
-            bulletLists.forEach(list => {
-                list.style.color = "var(--bullet-color)";
-            });
-        }
-
-        function downloadHtml(htmlContent, filename) {
-            const fullHtml = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Downloaded Content</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f3f4f6; color: #333; }
-                        h2, h3, h4 { color: var(--heading-color); }
-                        ul { color: var(--bullet-color); }
-                        p { margin: 0.5em 0; }
-                    </style>
-                </head>
-                <body>
-                    ${htmlContent}
-                </body>
-                </html>
-            `;
-            
-            const element = document.createElement("a");
-            element.setAttribute("href", "data:text/html;charset=utf-8," + encodeURIComponent(fullHtml));
-            element.setAttribute("download", filename);
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-        }
-
-        function handleError(error) {
-            console.error(error);
-            alert("An error occurred while processing the file.");
-            document.getElementById("loading").style.display = "none"; // Hide loading icon in case of error
-        }
-    </script>
+    function handleError(error) {
+      console.error(error);
+      alert("An error occurred while processing the file.");
+      setLoading(false);
+    }
+  </script>
+  
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
