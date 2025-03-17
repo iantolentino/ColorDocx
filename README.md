@@ -76,4 +76,4 @@ ColorDocx is a web application that lets you upload DOCX, PDF, or EPUB files and
 
 This project is licensed under the MIT License.
 
-https://itcodelab.github.io/ColorDocx/
+https://iantolentino.github.io/ColorDocx/
