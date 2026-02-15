@@ -212,3 +212,19 @@
       alert("An error occurred while processing the file.");
       setLoading(false);
     }
+
+    (function() {
+      const fileInput = document.getElementById('upload');
+      const fileNameSpan = document.getElementById('fileNameDisplay');
+      if (fileInput && fileNameSpan) {
+        fileInput.addEventListener('change', function(e) {
+          if (fileInput.files.length > 0) {
+            let name = fileInput.files[0].name;
+            if (name.length > 30) name = name.slice(0, 20) + '…' + name.slice(-10);
+            fileNameSpan.textContent = name;
+          } else {
+            fileNameSpan.textContent = 'no file chosen';
+          }
+        });
+      }
+    })();
