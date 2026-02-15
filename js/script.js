@@ -6,11 +6,18 @@
       localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
     }
     document.addEventListener("DOMContentLoaded", () => {
-      if (localStorage.getItem("theme") === "dark") {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+        document.body.classList.remove("dark-theme");
+    } else {
+        // Default to dark mode (if no preference or 'dark' is saved)
         document.body.classList.add("dark-theme");
-      }
+        // Save dark mode as default if no preference exists
+        if (!savedTheme) {
+        localStorage.setItem("theme", "dark");
+        }
+    }
     });
-
     function setLoading(show) {
       document.getElementById("loading").style.display = show ? "block" : "none";
     }
