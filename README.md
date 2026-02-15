@@ -1,79 +1,113 @@
 # ColorDocx
 
-ColorDocx is a web application that lets you upload DOCX, PDF, or EPUB files and display their content with customizable text styling. You can apply different styles to the text, switch between dark and light themes, download the styled content as HTML or PDF, and even read the content in full-screen mode for a distraction-free experience.
+ColorDocx is a web-based document reader and formatter optimized for **DOCX and EPUB** files. It allows users to upload documents and read them with customizable text styling, theme controls, and export options. While PDF files are supported, **PDF rendering and formatting are inherently unreliable** due to the limitations of text extraction and layout preservation.
+
+---
+
+## Primary Focus
+
+- **DOCX:** High-fidelity conversion with reliable structure and styling.
+- **EPUB:** Native reflowable reading experience, ideal for long-form content.
+- **PDF:** Supported for basic text extraction only; formatting accuracy is not guaranteed.
+
+---
 
 ## Features
 
-- **File Upload:**  
-  Supports DOCX, PDF, and EPUB files.
+- **Document Upload**
+  - Optimized support for DOCX and EPUB
+  - Limited, best-effort support for PDF
 
-- **Text Styling:**  
-  Choose from various styling options (underline, highlight, bold, italic) which are applied using a random color palette.
+- **Text Styling**
+  - Apply underline, highlight, bold, and italic
+  - Styles are applied using a randomized color palette for visual distinction
 
-- **Theme Toggle:**  
-  Switch easily between dark and light themes.
+- **Theme Management**
+  - Toggle between light and dark reading modes
 
-- **Download Options:**  
-  - **Download HTML:** Saves the displayed content as an HTML file with embedded styles.  
-  - **Download PDF:** Uses html2canvas and jsPDF to capture the full content and generate a PDF.
+- **Export Options**
+  - **HTML Export:** Preserves applied styles with embedded CSS
+  - **PDF Export:** Renders current content state via canvas capture
 
-- **Full Screen Mode:**  
-  Toggle full-screen view of the content for enhanced reading.
+- **Full-Screen Reading**
+  - Distraction-free reading using the Fullscreen API
 
-- **Responsive Design:**  
-  Built with Bootstrap for a mobile-friendly, responsive layout.
+- **Responsive UI**
+  - Mobile-friendly layout built with Bootstrap
 
-## How It Works
+---
 
-1. **File Processing:**  
-   - The application reads files using the FileReader API.
-   - **DOCX files:** Converted to HTML using [Mammoth.js](https://github.com/mwilliamson/mammoth.js).
-   - **PDF files:** Text is extracted using [PDF.js](https://mozilla.github.io/pdf.js/).
-   - **EPUB files:** Processed using [epub.js](https://github.com/futurepress/epub.js).
+## Architecture Overview
 
-2. **Styling:**  
-   The extracted text is displayed in a content area where styling is applied based on user selection.
+### File Processing
+- Files are read using the FileReader API.
+- **DOCX:** Converted to semantic HTML using Mammoth.js.
+- **EPUB:** Rendered using epub.js with native flow and pagination.
+- **PDF:** Text extracted via PDF.js (layout and spacing may degrade).
 
-3. **Downloads:**  
-   - **HTML Download:** The app embeds the current CSS styles into the HTML so that the look is preserved.
-   - **PDF Download:** A clone of the full content is captured (removing scroll restrictions) and rendered into a PDF.
+### Rendering & Styling
+- Parsed content is injected into a controlled reading container.
+- Styling actions are applied dynamically without mutating source content.
 
-4. **Full Screen Mode:**  
-   The application uses the Fullscreen API to toggle full-screen reading for the content area.
+### Export Pipeline
+- **HTML:** Inline styles are injected to ensure visual parity.
+- **PDF:** The rendered DOM is cloned, expanded, and rasterized before PDF generation.
 
-## Installation and Usage
+### Full-Screen Mode
+- Uses the browser Fullscreen API scoped to the reading container.
 
-1. **Clone or Download** the repository.
+---
 
-2. **Run on a Local Server:**  
-   For full functionality (especially file reading and PDF generation), run the app via a local server. For example, you can use:
+## Installation & Usage
 
-   - **VS Code Live Server Extension**
-   - **Python HTTP Server:**
-     ```bash
-     python -m http.server 8000
-     ```
-   Then, open [http://localhost:8000](http://localhost:8000) in your browser.
+### Setup
+1. Clone or download the repository.
+2. Serve the project via a local web server.
 
-3. **Using the App:**
-   - **Upload a File:** Click the file input and select a DOCX, PDF, or EPUB file.
-   - **Select a Style:** Choose a styling option (underline, highlight, bold, italic) from the dropdown.
-   - **Display and Style:** Click the "Display and Style Text" button to process the file.
-   - **Download:** Use the "Download HTML" or "Download PDF" buttons in the navbar to save your styled content.
-   - **Full Screen:** Click the "Full Screen" button in the navbar to toggle a full-screen view of the content.
-   - **Theme Toggle:** Switch between dark and light modes using the theme toggle button (🌗).
+**Example (Python):**
+```bash
+python -m http.server 8000
+````
+
+Open `http://localhost:8000` in your browser.
+
+---
+
+### Using the Application
+
+1. Upload a DOCX, EPUB, or PDF file.
+2. Select a text styling option.
+3. Render the document.
+4. Toggle theme or full-screen mode as needed.
+5. Export the styled content as HTML or PDF.
+
+---
 
 ## Dependencies
 
-- [Bootstrap 5](https://getbootstrap.com/)
-- [html2canvas](https://html2canvas.hertzen.com/)
-- [jsPDF](https://github.com/parallax/jsPDF)
-- [Mammoth.js](https://github.com/mwilliamson/mammoth.js)
-- [PDF.js](https://mozilla.github.io/pdf.js/)
-- [epub.js](https://github.com/futurepress/epub.js)
+* Bootstrap 5
+* html2canvas
+* jsPDF
+* Mammoth.js
+* PDF.js
+* epub.js
+
+---
+
+## Known Limitations
+
+* PDF formatting may be inconsistent or lossy.
+* Complex PDF layouts (tables, columns, forms) are not reliably preserved.
+* DOCX and EPUB provide the most stable and predictable results.
+
+---
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License
 
-https://iantolentino.github.io/ColorDocx/
+---
+
+## Live Demo
+
+[https://iantolentino.github.io/ColorDocx/](https://iantolentino.github.io/ColorDocx/)
