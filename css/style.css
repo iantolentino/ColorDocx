@@ -1,0 +1,60 @@
+:root {
+      /* Light Theme Colors */
+      --primary-light: #ffffff;
+      --secondary-light: #f3f4f6;
+      --accent-light: #4a90e2;
+      --text-light: #333;
+      /* Dark Theme Colors */
+      --primary-dark: #121212;
+      --secondary-dark: #333333;
+      --accent-dark: #4a90e2;
+      --text-dark: #ffffff;
+      /* Common Colors */
+      --primary: var(--primary-light);
+      --secondary: var(--secondary-light);
+      --accent: var(--accent-light);
+      --text-color: var(--text-light);
+      --heading-color: #FFD700;
+      --bullet-color: #32CD32;
+    }
+    body.dark-theme {
+      --primary: var(--primary-dark);
+      --secondary: var(--secondary-dark);
+      --accent: var(--accent-dark);
+      --text-color: var(--text-dark);
+      --heading-color: #FFA500;
+      --bullet-color: #4CAF50;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--primary);
+      color: var(--text-color);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    #content {
+      background: var(--secondary);
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      text-align: left;
+      margin-top: 20px;
+      overflow-y: auto;
+      max-height: 500px;
+    }
+    h1, h2, h3, h4 {
+      color: var(--heading-color);
+      font-weight: bold;
+    }
+    ul {
+      list-style-type: disc;
+      color: var(--bullet-color);
+    }
+    #loading {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: var(--accent);
+    }
